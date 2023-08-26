@@ -24,8 +24,9 @@ module.exports.patchUserInfo = (req, res) => {
   User.findByIdAndUpdate(owner, updMaterial).then((sm) => { res.send(`${sm} good`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.patchUserAvatar = (req, res) => {
-  const { avatar } = req.body;
-  const updMaterial = { avatar: avatar };
+  const updMaterial = {
+    avatar: req.body.avatar,
+  };
   const owner = req.user._id;
   console.log(updMaterial);
   User.findByIdAndUpdate(owner, updMaterial).then((sm) => { res.send(`${sm} good`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
