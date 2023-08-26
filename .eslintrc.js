@@ -22,7 +22,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-    "max-len": ["error", { "code": 250 }]
+    'no-underscore-dangle': ['error', { allow: ['_id'] }],
+    'max-len': ['error', { code: 250 }],
   },
 };
