@@ -5,7 +5,7 @@ module.exports.likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
-  ).then((sm) => { res.send(`${sm} good`); });
+  ).then((sm) => { res.send(`${sm}`); });
 };
 
 module.exports.unlikeCard = (req, res) => {
@@ -13,7 +13,7 @@ module.exports.unlikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
-  ).then((sm) => { res.send(`${sm} good`); });
+  ).then((sm) => { res.send(`${sm}`); });
 };
 
 module.exports.getAllCards = (req, res) => {
@@ -27,5 +27,5 @@ module.exports.deleteCardById = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  Card.create({ name, link, owner }).then((sm) => { res.send(`${sm} good`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
+  Card.create({ name, link, owner }).then((sm) => { res.send(`${sm}`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
 };

@@ -9,7 +9,7 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  User.create({ name, about, avatar }).then((sm) => { res.send(`${sm} good`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
+  User.create({ name, about, avatar }).then((sm) => { res.send(`${sm}`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.patchUserInfo = (req, res) => {
   const { name, about } = req.body;
@@ -21,7 +21,7 @@ module.exports.patchUserInfo = (req, res) => {
     updMaterial.about = about;
   }
   const owner = req.user._id;
-  User.findByIdAndUpdate(owner, updMaterial).then((sm) => { res.send(`${sm} good`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
+  User.findByIdAndUpdate(owner, updMaterial).then((sm) => { res.send(`${sm}`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.patchUserAvatar = (req, res) => {
   const updMaterial = {
@@ -29,5 +29,5 @@ module.exports.patchUserAvatar = (req, res) => {
   };
   const owner = req.user._id;
   console.log(updMaterial);
-  User.findByIdAndUpdate(owner, updMaterial).then((sm) => { res.send(`${sm} good`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
+  User.findByIdAndUpdate(owner, updMaterial).then((sm) => { res.send(`${sm}`); }).catch((err) => res.status(500).send({ message: `Произошла ошибка${err}` }));
 };
