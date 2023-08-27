@@ -2,12 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('events').EventEmitter.defaultMaxListeners = 20;
-const {
-  createUserRouter, getAllUsersRouter, getUserByIdRouter, patchUserInfoRouter, patchUserAvatarRouter,
-} = require('./routes/users');
-const {
-  createCardRouter, getAllCardsRouter, deleteCardByIdRouter, likeCardRouter, unlikeCardRouter,
-} = require('./routes/cards');
+const { userRouter } = require('./routes/users');
+const { cardsRouter } = require('./routes/cards');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -24,16 +20,8 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
-app.use('/', createUserRouter);
-app.use('/', getAllUsersRouter);
-app.use('/', getUserByIdRouter);
-app.use('/', patchUserInfoRouter);
-app.use('/', patchUserAvatarRouter);
-app.use('/', createCardRouter);
-app.use('/', getAllCardsRouter);
-app.use('/', deleteCardByIdRouter);
-app.use('/', likeCardRouter);
-app.use('/', unlikeCardRouter);
+app.use('/', userRouter);
+app.use('/', cardsRouter);
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
