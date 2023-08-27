@@ -20,8 +20,8 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
-app.use('/users', userRouter);
-app.use('/cards', cardsRouter);
+app.use('/users/', userRouter);
+app.use('/cards/', cardsRouter);
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
