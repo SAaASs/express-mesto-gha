@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
 // создадим схему документа «Домашнее животное»
 const userSchema = new mongoose.Schema({
-  name: {
+  avatar: {
     type: String,
     required: true,
-    minlength: 2,
-    maxlength: 30,
   },
   about: {
     type: String,
@@ -13,9 +11,11 @@ const userSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 30,
   },
-  avatar: {
+  name: {
     type: String,
     required: true,
+    minlength: 2,
+    maxlength: 30,
   },
 });
 module.exports = mongoose.model('User', userSchema);
