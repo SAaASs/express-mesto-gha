@@ -10,7 +10,11 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  User.create([{ name, about, avatar }], { runValidators: true }).then((user) => { res.send({ name: user[0].name, about: user[0].about, avatar: user[0].avatar }); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  User.create([{ name, about, avatar }], { runValidators: true }).then((user) => {
+    res.send({
+      _id: user[0]._id, name: user[0].name, about: user[0].about, avatar: user[0].avatar,
+    });
+  }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.patchUserInfo = (req, res) => {
   const { name, about } = req.body;
