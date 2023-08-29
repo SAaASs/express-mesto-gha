@@ -4,6 +4,7 @@
   "description": "backend for mesto-react",
   "main": "app.js",
   "scripts": {
+    "lint": "npx eslint .",
     "start": "node app.js",
     "lint": "npx eslint .",
     "dev": "nodemon app.js"
