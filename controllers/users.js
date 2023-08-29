@@ -4,7 +4,8 @@ module.exports.getAllUsers = (req, res) => {
   User.find({}).then((user) => res.send(user)).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.userId).then((user) => res.send(user)).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  console.log(req.params.userId);
+  User.findById(req.params.userId).then((user) => { if (user != null) { res.send(user); } else { res.status(404).send({ message: 'Оибка 404, пользователь не найден' }); } });
 };
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -21,13 +22,13 @@ module.exports.patchUserInfo = (req, res) => {
     updMaterial.about = about;
   }
   const owner = req.user._id;
-  User.findByIdAndUpdate(owner, [updMaterial], { runValidators: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  User.findByIdAndUpdate(owner, updMaterial, { runValidators: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.patchUserAvatar = (req, res) => {
   const updMaterial = {
     avatar: req.body.avatar,
   };
   const owner = req.user._id;
-  console.log(updMaterial);
-  User.findByIdAndUpdate(owner, [updMaterial], { runValidators: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  console.log(owner);
+  User.findByIdAndUpdate(owner, updMaterial, { runValidators: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };
