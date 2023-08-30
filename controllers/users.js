@@ -26,7 +26,7 @@ module.exports.patchUserInfo = (req, res) => {
     updMaterial.about = about;
   }
   const owner = req.user._id;
-  User.findByIdAndUpdate(owner, updMaterial, { runValidators: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  User.findByIdAndUpdate(owner, updMaterial, { runValidators: true, new: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };
 module.exports.patchUserAvatar = (req, res) => {
   const updMaterial = {
@@ -34,5 +34,5 @@ module.exports.patchUserAvatar = (req, res) => {
   };
   const owner = req.user._id;
   console.log(owner);
-  User.findByIdAndUpdate(owner, updMaterial, { runValidators: true }).then((user) => { res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  User.findByIdAndUpdate(owner, updMaterial, { runValidators: true, new: true }).then((user) => { console.log(user); res.send(user); }).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };

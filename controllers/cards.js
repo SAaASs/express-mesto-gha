@@ -21,7 +21,8 @@ module.exports.getAllCards = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId).then((card) => res.send({ data: card })).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
+  const sees = req.params.cardId;
+  Card.findByIdAndRemove(sees).then((card) => res.send({ data: card })).catch((err) => res.status(400).send({ message: `Произошла ошибка${err}` }));
 };
 
 module.exports.createCard = (req, res) => {
