@@ -5,7 +5,7 @@ module.exports.likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
-  ).then((sm) => { res.send(`${sm}`); });
+  ).then((card) => { if (card == null) { res.status(404).send({ message: 'Ошибка, пользователь не найден' }); } else { res.send(card); } }).catch((err) => { res.status(400).send({ err }); });
 };
 
 module.exports.unlikeCard = (req, res) => {
@@ -13,7 +13,7 @@ module.exports.unlikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
-  ).then((sm) => { res.send(`${sm}`); });
+  ).then((card) => { if (card == null) { res.status(404).send({ message: 'Ошибка, пользователь не найден' }); } else { res.send(card); } }).catch((err) => { res.status(400).send({ err }); });
 };
 
 module.exports.getAllCards = (req, res) => {
