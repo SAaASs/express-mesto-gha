@@ -5,7 +5,7 @@ module.exports.getAllUsers = (req, res) => {
 };
 module.exports.getUserById = (req, res) => {
   console.log(req.params.userId);
-  User.findById(req.params.userId).then((user) => { if (user != null) { res.send(user); } else { res.status(404).send({ message: 'Оибка 404, пользователь не найден' }); } });
+  User.findById(req.params.userId).then((user) => { if (user != null) { res.send(user); } }).catch((err) => { res.status(404).send({ err }); });
 };
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
