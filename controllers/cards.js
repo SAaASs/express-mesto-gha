@@ -1,3 +1,4 @@
+const Mongoose = require('mongoose');
 const Card = require('../models/card');
 
 module.exports.likeCard = (req, res) => {
@@ -5,7 +6,7 @@ module.exports.likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
-  ).then((card) => { res.send(card); }).catch((err) => { res.status(400).send({ err }); });
+  ).then((card) => { res.send(card); }).catch((err) => { if (err instanceof Mongoose.CastError) { const er = new Error(err); console.log(er); res.status(400).send({ message: er.message }); } });
 };
 
 module.exports.unlikeCard = (req, res) => {
@@ -13,7 +14,7 @@ module.exports.unlikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
-  ).then((card) => { res.send(card); }).catch((err) => { res.status(400).send({ err }); });
+  ).then((card) => { res.send(card); }).catch((err) => { if (err instanceof Mongoose.CastError) { const er = new Error(err); console.log(er); res.status(400).send({ message: er.message }); } });
 };
 
 module.exports.getAllCards = (req, res) => {
