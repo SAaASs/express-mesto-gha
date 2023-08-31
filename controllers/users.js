@@ -6,7 +6,7 @@ module.exports.getAllUsers = (req, res) => {
 };
 module.exports.getUserById = (req, res) => {
   console.log(req.params.userId);
-  User.findById(req.params.userId).then((user) => { if (user == null) { res.status(404).send({ message: 'Ошибка, пользователь не найден' }); } else { res.send(user); } }).catch((err) => { if (err instanceof Mongoose.CastError) { res.status(400).send(new Error(err)); } });
+  User.findById(req.params.userId).then((user) => { if (user == null) { res.status(404).send({ message: 'Ошибка, пользователь не найден' }); } else { res.send(user); } }).catch((err) => { if (err instanceof Mongoose.CastError) { const er = new Error(err); console.log(er); res.status(400).send({ message: er.message }); } });
 };
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
