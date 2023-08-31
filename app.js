@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 require('events').EventEmitter.defaultMaxListeners = 20;
 const { userRouter } = require('./routes/users');
 const { cardsRouter } = require('./routes/cards');
+const { errHandler } = require('./controllers/errHandler');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -22,6 +23,7 @@ app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 app.use('/users/', userRouter);
 app.use('/cards/', cardsRouter);
+app.use(errHandler);
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
