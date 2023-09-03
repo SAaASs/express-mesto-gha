@@ -41,7 +41,7 @@ module.exports.createUser = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.errors.name.name == "ValidatorError") {
+      if (err.errors.name == "ValidatorError") {
         res.status(400).send(err);
         return;
       }
