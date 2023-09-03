@@ -20,7 +20,9 @@ module.exports.likeCard = (req, res) => {
         const er = new Error(err);
         console.log(er);
         res.status(400).send({ message: er.message });
+        return;
       }
+      res.status(500).send("Непредвиденная ошибка сервера");
     });
 };
 
@@ -43,7 +45,9 @@ module.exports.unlikeCard = (req, res) => {
         const er = new Error(err);
         console.log(er);
         res.status(400).send({ message: er.message });
+        return;
       }
+      res.status(500).send("Непредвиденная ошибка сервера");
     });
 };
 
@@ -51,7 +55,7 @@ module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch((err) =>
-      res.status(400).send({ message: `Произошла ошибка${err}` })
+      res.status(500).send({ message: `Произошла ошибка${err}` })
     );
 };
 
@@ -66,9 +70,13 @@ module.exports.deleteCardById = (req, res) => {
         res.send(card);
       }
     })
-    .catch((err) =>
-      res.status(400).send({ message: `Произошла ошибка${err}` })
-    );
+    .catch((err) => {
+      if (err.name == "ValidationError") {
+        res.status(400).send(err);
+        return;
+      }
+      res.status(500).send(err);
+    });
 };
 
 module.exports.createCard = (req, res) => {

@@ -25,7 +25,9 @@ module.exports.getUserById = (req, res) => {
         const er = new Error(err);
         console.log(er);
         res.status(400).send({ message: er.message });
+        return;
       }
+      res.status(500).send("Непредвиденная ошибка сервера");
     });
 };
 module.exports.createUser = (req, res) => {
@@ -62,9 +64,13 @@ module.exports.patchUserInfo = (req, res) => {
     .then((user) => {
       res.send(user);
     })
-    .catch((err) =>
-      res.status(400).send({ message: `Произошла ошибка${err}` })
-    );
+    .catch((err) => {
+      if (err.name == "ValidationError") {
+        res.status(400).send(err);
+        return;
+      }
+      res.status(500).send(err);
+    });
 };
 module.exports.patchUserAvatar = (req, res) => {
   const updMaterial = {
@@ -77,7 +83,11 @@ module.exports.patchUserAvatar = (req, res) => {
       console.log(user);
       res.send(user);
     })
-    .catch((err) =>
-      res.status(400).send({ message: `Произошла ошибка${err}` })
-    );
+    .catch((err) => {
+      if (err.name == "ValidationError") {
+        res.status(400).send(err);
+        return;
+      }
+      res.status(500).send(err);
+    });
 };
