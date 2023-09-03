@@ -71,7 +71,8 @@ module.exports.deleteCardById = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name == "ValidationError") {
+      console.log(err);
+      if (err.name == "CastError") {
         res.status(400).send(err);
         return;
       }
