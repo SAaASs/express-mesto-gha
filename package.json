@@ -6,7 +6,6 @@
   "scripts": {
     "lint": "npx eslint .",
     "start": "node app.js",
-    "lint": "npx eslint .",
     "dev": "nodemon app.js"
   },
   "author": "spynuas",
@@ -15,9 +14,7 @@
     "eslint": "^8.47.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.28.1",
-    "nodemon": "^3.0.1",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
+    "nodemon": "^3.0.1"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
