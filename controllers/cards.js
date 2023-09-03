@@ -79,7 +79,7 @@ module.exports.createCard = (req, res) => {
       res.send(card[0]);
     })
     .catch((err) => {
-      if (err.errors.name.name == "ValidatorError") {
+      if (err.name == "ValidationError") {
         res.status(400).send(err);
         return;
       }
