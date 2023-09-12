@@ -52,6 +52,7 @@ module.exports.unlikeCard = (req, res) => {
 };
 
 module.exports.getAllCards = (req, res) => {
+  console.log("req.user", req.user);
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch((err) =>
@@ -61,23 +62,29 @@ module.exports.getAllCards = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   const sees = req.params.cardId;
-  Card.findByIdAndRemove(sees)
-    .then((card) => {
-      if (card == null) {
-        const er = new Error(card);
-        res.status(404).send({ message: er.message });
-      } else {
-        res.send(card);
+  const currentUser = req.user._id;
+  console.log("sees", sees);
+  Card.findById(sees).then((card) => {
+    if (card != null) {
+      if (card.owner == currentUser) {
+        Card.findByIdAndRemove(sees)
+          .then((card) => {
+            res.send(card);
+          })
+          .catch((err) => {
+            console.log(err);
+            if (err.name == "CastError") {
+              res.status(400).send(err);
+              return;
+            }
+            res.status(500).send(err);
+          });
       }
-    })
-    .catch((err) => {
-      console.log(err);
-      if (err.name == "CastError") {
-        res.status(400).send(err);
-        return;
-      }
-      res.status(500).send(err);
-    });
+    } else {
+      const er = new Error(card);
+      res.status(404).send({ message: "Карточки с такми id не существует" });
+    }
+  });
 };
 
 module.exports.createCard = (req, res) => {

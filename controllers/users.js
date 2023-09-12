@@ -1,6 +1,8 @@
 const Mongoose = require("mongoose");
 const User = require("../models/user");
-
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const validator = require("validator");
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((user) => res.send(user))
@@ -31,15 +33,36 @@ module.exports.getUserById = (req, res) => {
     });
 };
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create([{ name, about, avatar }], { runValidators: true })
+  const { name, about, avatar, email, password } = req.body;
+  if (!validator.isEmail(email)) {
+    res.status(400).send({ message: "Неправильная почта" });
+    return;
+  }
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User.create(
+        [
+          {
+            email: email,
+            password: hash,
+            name: name,
+            about: about,
+            avatar: avatar,
+          },
+        ],
+        {
+          runValidators: true,
+        }
+      );
+    })
     .then((user) => {
       res.send({
         _id: user[0]._id,
         name: user[0].name,
         about: user[0].about,
         avatar: user[0].avatar,
+        email: user[0].email,
       });
     })
     .catch((err) => {
@@ -89,5 +112,25 @@ module.exports.patchUserAvatar = (req, res) => {
         return;
       }
       res.status(500).send(err);
+    });
+};
+// controllers/users.js
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        "some-secret-key",
+        { expiresIn: "7d" } // токен будет просрочен через час после создания
+      );
+      res.cookie("mestoAuthCookie", token, { httpOnly: true });
+      res.send("test");
+    })
+    .catch((err) => {
+      // ошибка аутентификации
+      res.status(401).send({ message: err.message });
     });
 };
