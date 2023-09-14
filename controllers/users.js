@@ -11,7 +11,6 @@ module.exports.getAllUsers = (req, res) => {
     );
 };
 module.exports.getUserById = (req, res) => {
-  console.log(req.params.userId);
   User.findById(req.params.userId)
     .then((user) => {
       if (user == null) {
