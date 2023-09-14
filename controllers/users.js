@@ -10,11 +10,11 @@ module.exports.getAllUsers = (req, res) => {
       res.status(500).send({ message: `Произошла ошибка${err}` })
     );
 };
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user == null) {
-        res.status(404).send({ message: "Ошибка, пользователь не найден" });
+        next({ message: "Ошибка, пользователь не найден" });
         return;
       } else {
         res.send(user);
@@ -23,18 +23,16 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err instanceof Mongoose.CastError) {
-        const er = new Error(err);
-        console.log(er);
-        res.status(400).send({ message: er.message });
+        next({ message: er.message });
         return;
       }
       res.status(500).send("Непредвиденная ошибка сервера");
     });
 };
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   if (!validator.isEmail(email)) {
-    res.status(400).send({ message: "Неправильная почта" });
+    next({ message: "Неправильная почта" });
     return;
   }
   bcrypt
@@ -66,13 +64,13 @@ module.exports.createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name == "ValidationError") {
-        res.status(400).send(err);
+        next(err);
         return;
       }
       res.status(500).send(err);
     });
 };
-module.exports.patchUserInfo = (req, res) => {
+module.exports.patchUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   const updMaterial = {};
   if (name !== undefined) {
@@ -88,13 +86,13 @@ module.exports.patchUserInfo = (req, res) => {
     })
     .catch((err) => {
       if (err.name == "ValidationError") {
-        res.status(400).send(err);
+        next(err);
         return;
       }
-      res.status(500).send(err);
+      next(err);
     });
 };
-module.exports.patchUserAvatar = (req, res) => {
+module.exports.patchUserAvatar = (req, res, next) => {
   const updMaterial = {
     avatar: req.body.avatar,
   };
@@ -107,10 +105,10 @@ module.exports.patchUserAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name == "ValidationError") {
-        res.status(400).send(err);
+        next(err);
         return;
       }
-      res.status(500).send(err);
+      next(err);
     });
 };
 // controllers/users.js
@@ -130,6 +128,6 @@ module.exports.login = (req, res, next) => {
     })
     .catch((err) => {
       // ошибка аутентификации
-      res.status(401).send({ message: err.message });
+      next({ message: err.message });
     });
 };
