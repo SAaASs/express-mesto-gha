@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { errors } = require("celebrate");
 const bodyParser = require("body-parser");
 require("events").EventEmitter.defaultMaxListeners = 20;
 const { createUser, login } = require("./controllers/users");
@@ -21,6 +22,7 @@ app.use(auth);
 
 app.use("/users/", userRouter);
 app.use("/cards/", cardsRouter);
+app.use(errors());
 app.use("*", (req, res) => {
   res.status(404).send({ message: "Выбранного пути не существует" });
 });
