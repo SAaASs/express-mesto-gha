@@ -5,7 +5,7 @@ module.exports.createUserValidator = celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
-    avatar: Joi.link(),
+    avatar: Joi.string().min(2),
     about: Joi.string().min(2).max(30),
   }),
 });
@@ -27,12 +27,13 @@ module.exports.createCardValidator = celebrate({
     name: Joi.string().required().min(2).max(30),
     owner: Joi.string().hex().length(24),
     likes: Joi.array().required(),
-    link: Joi.link().required(),
+    link: Joi.string().min(2),
     createdAt: Joi.date().required(),
   }),
 });
 
 module.exports.errHandler = (err, req, res, next) => {
+  console.log(err);
   res.status(err.statusCode).send({ message: err.message });
   next();
 };

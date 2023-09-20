@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // создадим схему документа «Домашнее животное»
 const cardSchema = new mongoose.Schema(
   {
@@ -12,20 +12,25 @@ const cardSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    likes: [{ // описываем схему для одного элемента и заключаем её в квадратные скобки
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      default: [],
-    }],
+    likes: [
+      {
+        // описываем схему для одного элемента и заключаем её в квадратные скобки
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        default: [],
+      },
+    ],
     link: {
       type: String,
       required: true,
+      validate:
+        /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
     },
     createdAt: {
       type: Date,
       default: Date.now(),
     },
   },
-  { versionKey: false },
+  { versionKey: false }
 );
-module.exports = mongoose.model('Card', cardSchema);
+module.exports = mongoose.model("Card", cardSchema);
