@@ -5,7 +5,7 @@ module.exports.createUserValidator = celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
-    age: Joi.number().integer().min(18),
+    avatar: Joi.number().integer().min(18),
     about: Joi.string().min(2).max(30),
   }),
 });
