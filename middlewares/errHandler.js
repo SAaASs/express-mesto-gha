@@ -5,7 +5,9 @@ module.exports.createUserValidator = celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
-    avatar: Joi.string().min(2),
+    avatar: Joi.string().pattern(
+      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+    ),
     about: Joi.string().min(2).max(30),
   }),
 });
@@ -27,7 +29,9 @@ module.exports.createCardValidator = celebrate({
     name: Joi.string().required().min(2).max(30),
     owner: Joi.string().hex().length(24),
     likes: Joi.array().required(),
-    link: Joi.string().min(2),
+    link: Joi.string().pattern(
+      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+    ),
     createdAt: Joi.date().required(),
   }),
 });
