@@ -8,8 +8,8 @@ const {
   patchUserAvatar,
 } = require("../controllers/users");
 
-userRouter.get("/", userValidator, getAllUsers);
-userRouter.get("/:userId", userValidator, getUserById);
-userRouter.patch("/me", userValidator, patchUserInfo);
-userRouter.patch("/me/avatar", userValidator, patchUserAvatar);
+userRouter.get("/", getAllUsers);
+userRouter.get("/:userId", getUserById);
+userRouter.patch("/me", patchUserInfo);
+userRouter.patch("/me/avatar", patchUserAvatar);
 module.exports = { userRouter };

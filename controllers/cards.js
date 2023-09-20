@@ -9,20 +9,21 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card == null) {
-        const er = new Error(card);
-        res.status(404).send({ message: er.message });
+        let er = new Error("Карточки с таким id не существует");
+        er.statusCode = 404;
+        next(er);
       } else {
         res.send(card);
       }
     })
     .catch((err) => {
       if (err instanceof Mongoose.CastError) {
-        const er = new Error(err);
-        console.log(er);
-        res.status(400).send({ message: er.message });
+        err.statusCode = 400;
+        next(err);
         return;
       }
-      res.status(500).send("Непредвиденная ошибка сервера");
+      err.statusCode = 500;
+      next(err);
     });
 };
 
@@ -34,7 +35,8 @@ module.exports.unlikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card == null) {
-        const er = new Error(card);
+        let er = new Error("Карточки с таким id не существует");
+        er.statusCode = 404;
         next(er);
       } else {
         res.send(card);
@@ -42,11 +44,12 @@ module.exports.unlikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof Mongoose.CastError) {
-        const er = new Error(err);
-        next(er);
+        err.statusCode = 400;
+        next(err);
         return;
       }
-      res.status(500).send("Непредвиденная ошибка сервера");
+      err.statusCode = 500;
+      next(err);
     });
 };
 
@@ -54,7 +57,10 @@ module.exports.getAllCards = (req, res, next) => {
   console.log("req.user", req.user);
   Card.find({})
     .then((card) => res.send({ data: card }))
-    .catch((err) => next(err));
+    .catch((err) => {
+      err.statusCode = 500;
+      next(err);
+    });
 };
 
 module.exports.deleteCardById = (req, res, next) => {
@@ -69,17 +75,14 @@ module.exports.deleteCardById = (req, res, next) => {
             res.send(card);
           })
           .catch((err) => {
-            console.log(err);
-            if (err.name == "CastError") {
-              next(err);
-              return;
-            }
-            res.status(500).send(err);
+            err.statusCode = 500;
+            next(err);
           });
       }
     } else {
-      const er = new Error(card);
-      res.status(404).send({ message: "Карточки с такми id не существует" });
+      let er = new Error("Карточки с такми id не существует");
+      er.statusCode = 404;
+      next(er);
     }
   });
 };
@@ -93,9 +96,11 @@ module.exports.createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name == "ValidationError") {
+        err.statusCode = 400;
         next(err);
         return;
       }
+      err.statusCode = 500;
       next(err);
     });
 };

@@ -3,18 +3,21 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send(user))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка${err}` })
-    );
+    .catch((err) => {
+      err.statusCode = 500;
+      next(err);
+    });
 };
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user == null) {
-        next({ message: "Ошибка, пользователь не найден" });
+        let er = new Error("Ошибка, пользователь не найден");
+        er.statusCode = 404;
+        next(er);
         return;
       } else {
         res.send(user);
@@ -23,16 +26,20 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof Mongoose.CastError) {
-        next({ message: er.message });
+        err.statusCode = 404;
+        next(err);
         return;
       }
-      res.status(500).send("Непредвиденная ошибка сервера");
+      err.statusCode = 500;
+      next(err);
     });
 };
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   if (!validator.isEmail(email)) {
-    next({ message: "Неправильная почта" });
+    let er = new Error("Неправильная почта или пароль");
+    er.statusCode = 401;
+    next(er);
     return;
   }
   bcrypt
@@ -51,23 +58,25 @@ module.exports.createUser = (req, res, next) => {
         {
           runValidators: true,
         }
-      );
-    })
-    .then((user) => {
-      res.send({
-        _id: user[0]._id,
-        name: user[0].name,
-        about: user[0].about,
-        avatar: user[0].avatar,
-        email: user[0].email,
+      ).then((user) => {
+        res.send({
+          _id: user._id,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+        });
       });
     })
+
     .catch((err) => {
       if (err.name == "ValidationError") {
+        err.statusCode = 403;
         next(err);
         return;
       }
-      res.status(500).send(err);
+      err.statusCode = 500;
+      next(err);
     });
 };
 module.exports.patchUserInfo = (req, res, next) => {
@@ -86,9 +95,11 @@ module.exports.patchUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name == "ValidationError") {
+        err.statusCode = 403;
         next(err);
         return;
       }
+      err.statusCode = 500;
       next(err);
     });
 };
@@ -105,9 +116,11 @@ module.exports.patchUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name == "ValidationError") {
+        err.statusCode = 403;
         next(err);
         return;
       }
+      err.statusCode = 500;
       next(err);
     });
 };
@@ -127,7 +140,7 @@ module.exports.login = (req, res, next) => {
       res.send("test");
     })
     .catch((err) => {
-      // ошибка аутентификации
-      next({ message: err.message });
+      err.statusCode = 401;
+      next(err);
     });
 };
