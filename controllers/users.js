@@ -36,6 +36,13 @@ module.exports.getUserById = (req, res, next) => {
 };
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
+  const clone = User.findOne({ email: email });
+  if (clone != null) {
+    const er = new Error("Пользователь с таким email уже существует");
+    er.statusCode = 409;
+    next(er);
+    return;
+  }
   if (!validator.isEmail(email)) {
     let er = new Error("Неправильная почта или пароль");
     er.statusCode = 401;
@@ -59,12 +66,13 @@ module.exports.createUser = (req, res, next) => {
           runValidators: true,
         }
       ).then((user) => {
+        console.log(user);
         res.send({
-          _id: user._id,
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
+          _id: user[0]._id,
+          name: user[0].name,
+          about: user[0].about,
+          avatar: user[0].avatar,
+          email: user[0].email,
         });
       });
     })
