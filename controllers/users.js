@@ -142,7 +142,7 @@ module.exports.login = (req, res, next) => {
         { expiresIn: "7d" } // токен будет просрочен через час после создания
       );
       res.cookie("mestoAuthCookie", token, { httpOnly: true });
-      res.send("test");
+      res.send({ message: "Авторизация прошла успешно" });
     })
     .catch((err) => {
       err.statusCode = 401;

@@ -31,10 +31,12 @@ module.exports.createCardValidator = celebrate({
     name: Joi.string().required().min(2).max(30),
     owner: Joi.string().hex().length(24),
     likes: Joi.array(),
-    link: Joi.string().pattern(
-      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
-    ),
-    createdAt: Joi.date().required(),
+    link: Joi.string()
+      .required()
+      .pattern(
+        /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
+      ),
+    createdAt: Joi.date(),
   }),
 });
 
