@@ -66,7 +66,6 @@ module.exports.getAllCards = (req, res, next) => {
 module.exports.deleteCardById = (req, res, next) => {
   const sees = req.params.cardId;
   const currentUser = req.user._id;
-  console.log("sees", sees);
   Card.findById(sees).then((card) => {
     if (card != null) {
       if (card.owner == currentUser) {
@@ -78,6 +77,10 @@ module.exports.deleteCardById = (req, res, next) => {
             err.statusCode = 500;
             next(err);
           });
+      } else {
+        let er = new Error("Это не ваща карточка, вы не можете ее удалить");
+        er.statusCode = 400;
+        next(er);
       }
     } else {
       let er = new Error("Карточки с такми id не существует");
