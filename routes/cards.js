@@ -12,7 +12,7 @@ const {
 } = require("../controllers/cards");
 
 cardsRouter.get("/", getAllCards);
-cardsRouter.delete("/:cardId", deleteCardById);
+cardsRouter.delete("/:cardId", changeCardStateValidator, deleteCardById);
 cardsRouter.post("/", createCardValidator, createCard);
 cardsRouter.put("/:cardId/likes", changeCardStateValidator, likeCard);
 cardsRouter.delete("/:cardId/likes", changeCardStateValidator, unlikeCard);
