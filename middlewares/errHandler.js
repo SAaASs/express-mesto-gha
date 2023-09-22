@@ -39,7 +39,16 @@ module.exports.createCardValidator = celebrate({
     createdAt: Joi.date(),
   }),
 });
-
+module.exports.changeCardStateValidator = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().hex().length(24),
+  }),
+});
+module.exports.getUserValidator = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().required().hex().length(24),
+  }),
+});
 module.exports.errHandler = (err, req, res, next) => {
   console.log(err);
   res
