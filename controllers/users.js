@@ -36,56 +36,55 @@ module.exports.getUserById = (req, res, next) => {
 };
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-  const clone = User.findOne({ email: email });
-  if (clone != null) {
-    const er = new Error("Пользователь с таким email уже существует");
-    er.statusCode = 409;
-    next(er);
-    return;
-  }
   if (!validator.isEmail(email)) {
     let er = new Error("Неправильная почта или пароль");
     er.statusCode = 401;
     next(er);
     return;
   }
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => {
-      User.create(
-        [
-          {
-            email: email,
-            password: hash,
-            name: name,
-            about: about,
-            avatar: avatar,
-          },
-        ],
-        {
-          runValidators: true,
-        }
-      ).then((user) => {
-        console.log(user);
-        res.send({
-          _id: user[0]._id,
-          name: user[0].name,
-          about: user[0].about,
-          avatar: user[0].avatar,
-          email: user[0].email,
+  User.findOne({ email: email }).then((data) => {
+    if (data) {
+      const er = new Error("Пользователь с таким email уже существует");
+      er.statusCode = 409;
+      next(er);
+    } else {
+      bcrypt
+        .hash(password, 10)
+        .then((hash) => {
+          User.create(
+            [
+              {
+                email: email,
+                password: hash,
+                name: name,
+                about: about,
+                avatar: avatar,
+              },
+            ],
+            {
+              runValidators: true,
+            }
+          ).then((user) => {
+            res.send({
+              _id: user[0]._id,
+              name: user[0].name,
+              about: user[0].about,
+              avatar: user[0].avatar,
+              email: user[0].email,
+            });
+          });
+        })
+        .catch((err) => {
+          if (err.name == "ValidationError") {
+            err.statusCode = 403;
+            next(err);
+            return;
+          }
+          err.statusCode = 500;
+          next(err);
         });
-      });
-    })
-
-    .catch((err) => {
-      if (err.name == "ValidationError") {
-        err.statusCode = 403;
-        next(err);
-        return;
-      }
-      err.statusCode = 500;
-      next(err);
-    });
+    }
+  });
 };
 module.exports.patchUserInfo = (req, res, next) => {
   const { name, about } = req.body;
@@ -116,10 +115,8 @@ module.exports.patchUserAvatar = (req, res, next) => {
     avatar: req.body.avatar,
   };
   const owner = req.user._id;
-  console.log(owner);
   User.findByIdAndUpdate(owner, updMaterial, { runValidators: true, new: true })
     .then((user) => {
-      console.log(user);
       res.send(user);
     })
     .catch((err) => {
