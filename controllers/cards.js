@@ -79,7 +79,7 @@ module.exports.deleteCardById = (req, res, next) => {
           });
       } else {
         let er = new Error("Это не ваща карточка, вы не можете ее удалить");
-        er.statusCode = 400;
+        er.statusCode = 403;
         next(er);
       }
     } else {
