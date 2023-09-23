@@ -63,7 +63,7 @@ module.exports.deleteCardById = (req, res, next) => {
   const currentUser = req.user._id;
   Card.findById(sees).then((card) => {
     if (card != null) {
-      if (card.owner === currentUser) {
+      if (card.owner == currentUser) {
         Card.findByIdAndRemove(sees)
           .then((card) => {
             res.send(card);
