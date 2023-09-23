@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 const { default: mongoose } = require('mongoose');
+
 module.exports.createUserValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),

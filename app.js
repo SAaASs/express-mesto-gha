@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 require('events').EventEmitter.defaultMaxListeners = 20;
+const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/users');
 const {
   createUserValidator,
@@ -12,7 +13,6 @@ const { auth } = require('./middlewares/auth');
 const { userRouter } = require('./routes/users');
 const { cardsRouter } = require('./routes/cards');
 const { errHandler } = require('./middlewares/errHandler');
-const cookieParser = require('cookie-parser');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 

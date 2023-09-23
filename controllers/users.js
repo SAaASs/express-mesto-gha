@@ -1,52 +1,47 @@
 const Mongoose = require('mongoose');
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
+const User = require('../models/user');
+const NotFoundError = require('../errors/NotFoundError');
+const ConflictError = require('../errors/ConflictError');
+const ForbidenError = require('../errors/ForbidenError');
+const UnauthorisedError = require('../errors/UnauthorisedError');
+const UnkownError = require('../errors/UnknownError');
+
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send(user))
     .catch((err) => {
-      err.statusCode = 500;
-      next(err);
+      next(new UnkownError(err.message));
     });
 };
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user == null) {
-        let er = new Error('Ошибка, пользователь не найден');
-        er.statusCode = 404;
-        next(er);
-        return;
+        next(new NotFoundError('Ошибка, пользователь не найден'));
       } else {
         res.send(user);
-        return;
       }
     })
     .catch((err) => {
       if (err instanceof Mongoose.CastError) {
-        err.statusCode = 404;
-        next(err);
+        next(new NotFoundError(err.message));
         return;
       }
-      err.statusCode = 500;
-      next(err);
+      next(new UnkownError(err.message));
     });
 };
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   if (!validator.isEmail(email)) {
-    let er = new Error('Неправильная почта или пароль');
-    er.statusCode = 401;
-    next(er);
+    next(UnauthorisedError('Неправильная почта или пароль'));
     return;
   }
-  User.findOne({ email: email }).then((data) => {
+  User.findOne({ email }).then((data) => {
     if (data) {
-      const er = new Error('Пользователь с таким email уже существует');
-      er.statusCode = 409;
-      next(er);
+      next(ConflictError('Пользователь с таким email уже существует'));
     } else {
       bcrypt
         .hash(password, 10)
@@ -54,16 +49,16 @@ module.exports.createUser = (req, res, next) => {
           User.create(
             [
               {
-                email: email,
+                email,
                 password: hash,
-                name: name,
-                about: about,
-                avatar: avatar,
+                name,
+                about,
+                avatar,
               },
             ],
             {
               runValidators: true,
-            }
+            },
           ).then((user) => {
             res.send({
               _id: user[0]._id,
@@ -75,13 +70,11 @@ module.exports.createUser = (req, res, next) => {
           });
         })
         .catch((err) => {
-          if (err.name == 'ValidationError') {
-            err.statusCode = 403;
-            next(err);
+          if (err.name === 'ValidationError') {
+            next(ForbidenError(err.message));
             return;
           }
-          err.statusCode = 500;
-          next(err);
+          next(UnkownError(err.message));
         });
     }
   });
@@ -101,13 +94,11 @@ module.exports.patchUserInfo = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name == 'ValidationError') {
-        err.statusCode = 403;
-        next(err);
+      if (err.name === 'ValidationError') {
+        next(ForbidenError(err.message));
         return;
       }
-      err.statusCode = 500;
-      next(err);
+      next(UnkownError(err.message));
     });
 };
 module.exports.patchUserAvatar = (req, res, next) => {
@@ -120,13 +111,11 @@ module.exports.patchUserAvatar = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name == 'ValidationError') {
-        err.statusCode = 403;
-        next(err);
+      if (err.name === 'ValidationError') {
+        next(ForbidenError(err.message));
         return;
       }
-      err.statusCode = 500;
-      next(err);
+      next(UnkownError(err.message));
     });
 };
 // controllers/users.js
@@ -136,21 +125,18 @@ module.exports.login = (req, res, next) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        'some-secret-key',
-        { expiresIn: '7d' } // токен будет просрочен через час после создания
-      );
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
+      });
       res.cookie('mestoAuthCookie', token, { httpOnly: true });
       res.send({ message: 'Авторизация прошла успешно' });
     })
     .catch((err) => {
-      err.statusCode = 401;
-      next(err);
+      next(UnauthorisedError(err.message));
     });
 };
 
-module.exports.getCurrentUser = (req, res, next) => {
+module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user._id).then((user) => {
     res.send(user);
   });
