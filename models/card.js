@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 // создадим схему документа «Домашнее животное»
 const cardSchema = new mongoose.Schema(
   {
@@ -33,4 +33,4 @@ const cardSchema = new mongoose.Schema(
   },
   { versionKey: false }
 );
-module.exports = mongoose.model("Card", cardSchema);
+module.exports = mongoose.model('Card', cardSchema);

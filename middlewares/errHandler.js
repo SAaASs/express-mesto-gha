@@ -1,5 +1,5 @@
-const { celebrate, Joi } = require("celebrate");
-const { default: mongoose } = require("mongoose");
+const { celebrate, Joi } = require('celebrate');
+const { default: mongoose } = require('mongoose');
 module.exports.createUserValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -53,6 +53,6 @@ module.exports.errHandler = (err, req, res, next) => {
   console.log(err);
   res
     .status(err.statusCode || 500)
-    .send({ message: err.message || "Неизвестная ошибка сервера" });
+    .send({ message: err.message || 'Неизвестная ошибка сервера' });
   next();
 };

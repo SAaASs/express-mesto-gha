@@ -1,8 +1,8 @@
-const Mongoose = require("mongoose");
-const User = require("../models/user");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const validator = require("validator");
+const Mongoose = require('mongoose');
+const User = require('../models/user');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const validator = require('validator');
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send(user))
@@ -15,7 +15,7 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user == null) {
-        let er = new Error("Ошибка, пользователь не найден");
+        let er = new Error('Ошибка, пользователь не найден');
         er.statusCode = 404;
         next(er);
         return;
@@ -37,14 +37,14 @@ module.exports.getUserById = (req, res, next) => {
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   if (!validator.isEmail(email)) {
-    let er = new Error("Неправильная почта или пароль");
+    let er = new Error('Неправильная почта или пароль');
     er.statusCode = 401;
     next(er);
     return;
   }
   User.findOne({ email: email }).then((data) => {
     if (data) {
-      const er = new Error("Пользователь с таким email уже существует");
+      const er = new Error('Пользователь с таким email уже существует');
       er.statusCode = 409;
       next(er);
     } else {
@@ -75,7 +75,7 @@ module.exports.createUser = (req, res, next) => {
           });
         })
         .catch((err) => {
-          if (err.name == "ValidationError") {
+          if (err.name == 'ValidationError') {
             err.statusCode = 403;
             next(err);
             return;
@@ -101,7 +101,7 @@ module.exports.patchUserInfo = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name == "ValidationError") {
+      if (err.name == 'ValidationError') {
         err.statusCode = 403;
         next(err);
         return;
@@ -120,7 +120,7 @@ module.exports.patchUserAvatar = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name == "ValidationError") {
+      if (err.name == 'ValidationError') {
         err.statusCode = 403;
         next(err);
         return;
@@ -138,11 +138,11 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        "some-secret-key",
-        { expiresIn: "7d" } // токен будет просрочен через час после создания
+        'some-secret-key',
+        { expiresIn: '7d' } // токен будет просрочен через час после создания
       );
-      res.cookie("mestoAuthCookie", token, { httpOnly: true });
-      res.send({ message: "Авторизация прошла успешно" });
+      res.cookie('mestoAuthCookie', token, { httpOnly: true });
+      res.send({ message: 'Авторизация прошла успешно' });
     })
     .catch((err) => {
       err.statusCode = 401;

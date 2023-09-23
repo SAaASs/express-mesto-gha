@@ -1,5 +1,5 @@
-const Mongoose = require("mongoose");
-const Card = require("../models/card");
+const Mongoose = require('mongoose');
+const Card = require('../models/card');
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -9,7 +9,7 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card == null) {
-        let er = new Error("Карточки с таким id не существует");
+        let er = new Error('Карточки с таким id не существует');
         er.statusCode = 404;
         next(er);
       } else {
@@ -35,7 +35,7 @@ module.exports.unlikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card == null) {
-        let er = new Error("Карточки с таким id не существует");
+        let er = new Error('Карточки с таким id не существует');
         er.statusCode = 404;
         next(er);
       } else {
@@ -54,7 +54,7 @@ module.exports.unlikeCard = (req, res, next) => {
 };
 
 module.exports.getAllCards = (req, res, next) => {
-  console.log("req.user", req.user);
+  console.log('req.user', req.user);
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
@@ -78,12 +78,12 @@ module.exports.deleteCardById = (req, res, next) => {
             next(err);
           });
       } else {
-        let er = new Error("Это не ваща карточка, вы не можете ее удалить");
+        let er = new Error('Это не ваща карточка, вы не можете ее удалить');
         er.statusCode = 403;
         next(er);
       }
     } else {
-      let er = new Error("Карточки с такми id не существует");
+      let er = new Error('Карточки с такми id не существует');
       er.statusCode = 404;
       next(er);
     }
@@ -98,7 +98,7 @@ module.exports.createCard = (req, res, next) => {
       res.send(card[0]);
     })
     .catch((err) => {
-      if (err.name == "ValidationError") {
+      if (err.name == 'ValidationError') {
         err.statusCode = 400;
         next(err);
         return;
