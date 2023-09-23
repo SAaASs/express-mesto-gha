@@ -36,12 +36,12 @@ module.exports.getUserById = (req, res, next) => {
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   if (!validator.isEmail(email)) {
-    next(UnauthorisedError('Неправильная почта или пароль'));
+    next(new UnauthorisedError('Неправильная почта или пароль'));
     return;
   }
   User.findOne({ email }).then((data) => {
     if (data) {
-      next(ConflictError('Пользователь с таким email уже существует'));
+      next(new ConflictError('Пользователь с таким email уже существует'));
     } else {
       bcrypt
         .hash(password, 10)
@@ -71,10 +71,10 @@ module.exports.createUser = (req, res, next) => {
         })
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(ForbidenError(err.message));
+            next(new ForbidenError(err.message));
             return;
           }
-          next(UnkownError(err.message));
+          next(new UnkownError(err.message));
         });
     }
   });
@@ -95,10 +95,10 @@ module.exports.patchUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(ForbidenError(err.message));
+        next(new ForbidenError(err.message));
         return;
       }
-      next(UnkownError(err.message));
+      next(new UnkownError(err.message));
     });
 };
 module.exports.patchUserAvatar = (req, res, next) => {
@@ -112,10 +112,10 @@ module.exports.patchUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(ForbidenError(err.message));
+        next(new ForbidenError(err.message));
         return;
       }
-      next(UnkownError(err.message));
+      next(new UnkownError(err.message));
     });
 };
 // controllers/users.js
@@ -132,7 +132,7 @@ module.exports.login = (req, res, next) => {
       res.send({ message: 'Авторизация прошла успешно' });
     })
     .catch((err) => {
-      next(UnauthorisedError(err.message));
+      next(new UnauthorisedError(err.message));
     });
 };
 
