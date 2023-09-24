@@ -67,6 +67,9 @@ module.exports.createUser = (req, res, next) => {
             next(new ForbidenError(err.message));
             return;
           }
+          if (err.code === 11000) {
+            next(new ConflictError(err.message));
+          }
           next(err);
         });
     }
