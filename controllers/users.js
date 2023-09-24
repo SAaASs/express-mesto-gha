@@ -78,12 +78,8 @@ module.exports.createUser = (req, res, next) => {
 module.exports.patchUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   const updMaterial = {};
-  if (name !== undefined) {
-    updMaterial.name = name;
-  }
-  if (about !== undefined) {
-    updMaterial.about = about;
-  }
+  updMaterial.name = name;
+  updMaterial.about = about;
   const owner = req.user._id;
   User.findByIdAndUpdate(owner, updMaterial, { runValidators: true, new: true })
     .then((user) => {
