@@ -32,48 +32,42 @@ module.exports.getUserById = (req, res, next) => {
 };
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-  User.findOne({ email }).then((data) => {
-    if (data) {
-      next(new ConflictError('Пользователь с таким email уже существует'));
-    } else {
-      bcrypt
-        .hash(password, 10)
-        .then((hash) => {
-          User.create(
-            [
-              {
-                email,
-                password: hash,
-                name,
-                about,
-                avatar,
-              },
-            ],
-            {
-              runValidators: true,
-            },
-          ).then((user) => {
-            res.send({
-              _id: user[0]._id,
-              name: user[0].name,
-              about: user[0].about,
-              avatar: user[0].avatar,
-              email: user[0].email,
-            });
-          });
-        })
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(new ForbidenError(err.message));
-            return;
-          }
-          if (err.code === 11000) {
-            next(new ConflictError(err.message));
-          }
-          next(err);
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User.create(
+        [
+          {
+            email,
+            password: hash,
+            name,
+            about,
+            avatar,
+          },
+        ],
+        {
+          runValidators: true,
+        },
+      ).then((user) => {
+        res.send({
+          _id: user[0]._id,
+          name: user[0].name,
+          about: user[0].about,
+          avatar: user[0].avatar,
+          email: user[0].email,
         });
-    }
-  });
+      });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ForbidenError(err.message));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new ConflictError(err.message));
+      }
+      next(err);
+    });
 };
 module.exports.patchUserInfo = (req, res, next) => {
   const { name, about } = req.body;
