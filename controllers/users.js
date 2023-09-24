@@ -35,10 +35,6 @@ module.exports.getUserById = (req, res, next) => {
 };
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
-  if (!validator.isEmail(email)) {
-    next(new UnauthorisedError('Неправильная почта или пароль'));
-    return;
-  }
   User.findOne({ email }).then((data) => {
     if (data) {
       next(new ConflictError('Пользователь с таким email уже существует'));

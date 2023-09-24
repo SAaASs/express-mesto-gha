@@ -4,6 +4,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ForbidenError = require('../errors/ForbidenError');
 const UnkownError = require('../errors/UnknownError');
 const BadRequestError = require('../errors/BadRequestError');
+const UnknownError = require('../errors/UnknownError');
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -61,25 +62,29 @@ module.exports.getAllCards = (req, res, next) => {
 module.exports.deleteCardById = (req, res, next) => {
   const sees = req.params.cardId;
   const currentUser = req.user._id;
-  Card.findById(sees).then((card) => {
-    if (card != null) {
-      if (card.owner == currentUser) {
-        Card.findByIdAndRemove(sees)
-          .then((card) => {
-            res.send(card);
-          })
-          .catch((err) => {
-            next(new UnkownError(err.message));
-          });
+  Card.findById(sees)
+    .then((card) => {
+      if (card != null) {
+        if (card.owner == currentUser) {
+          Card.findByIdAndRemove(sees)
+            .then((card) => {
+              res.send(card);
+            })
+            .catch((err) => {
+              next(new UnkownError(err.message));
+            });
+        } else {
+          next(
+            new ForbidenError('Это не ваща карточка, вы не можете ее удалить'),
+          );
+        }
       } else {
-        next(
-          new ForbidenError('Это не ваща карточка, вы не можете ее удалить'),
-        );
+        next(new NotFoundError('Карточки с такми id не существует'));
       }
-    } else {
-      next(new NotFoundError('Карточки с такми id не существует'));
-    }
-  });
+    })
+    .catch((err) => {
+      next(new UnknownError(err.message));
+    });
 };
 
 module.exports.createCard = (req, res, next) => {
