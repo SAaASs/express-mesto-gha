@@ -1,19 +1,16 @@
 const Mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const validator = require('validator');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const ForbidenError = require('../errors/ForbidenError');
-const UnauthorisedError = require('../errors/UnauthorisedError');
-const UnkownError = require('../errors/UnknownError');
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send(user))
     .catch((err) => {
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 module.exports.getUserById = (req, res, next) => {
@@ -30,7 +27,7 @@ module.exports.getUserById = (req, res, next) => {
         next(new NotFoundError(err.message));
         return;
       }
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 module.exports.createUser = (req, res, next) => {
@@ -70,7 +67,7 @@ module.exports.createUser = (req, res, next) => {
             next(new ForbidenError(err.message));
             return;
           }
-          next(new UnkownError(err.message));
+          next(err);
         });
     }
   });
@@ -90,7 +87,7 @@ module.exports.patchUserInfo = (req, res, next) => {
         next(new ForbidenError(err.message));
         return;
       }
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 module.exports.patchUserAvatar = (req, res, next) => {
@@ -107,7 +104,7 @@ module.exports.patchUserAvatar = (req, res, next) => {
         next(new ForbidenError(err.message));
         return;
       }
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 // controllers/users.js
@@ -124,7 +121,8 @@ module.exports.login = (req, res, next) => {
       res.send({ message: 'Авторизация прошла успешно' });
     })
     .catch((err) => {
-      next(new UnauthorisedError(err.message));
+      err.statusCode = 401;
+      next(err);
     });
 };
 
