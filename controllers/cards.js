@@ -2,9 +2,7 @@ const Mongoose = require('mongoose');
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbidenError = require('../errors/ForbidenError');
-const UnkownError = require('../errors/UnknownError');
 const BadRequestError = require('../errors/BadRequestError');
-const UnknownError = require('../errors/UnknownError');
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -24,7 +22,7 @@ module.exports.likeCard = (req, res, next) => {
         next(new BadRequestError(err.message));
         return;
       }
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 
@@ -46,7 +44,7 @@ module.exports.unlikeCard = (req, res, next) => {
         next(new BadRequestError(err.message));
         return;
       }
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 
@@ -55,7 +53,7 @@ module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
 
@@ -71,7 +69,7 @@ module.exports.deleteCardById = (req, res, next) => {
               res.send(card);
             })
             .catch((err) => {
-              next(new UnkownError(err.message));
+              next(err);
             });
         } else {
           next(
@@ -83,7 +81,7 @@ module.exports.deleteCardById = (req, res, next) => {
       }
     })
     .catch((err) => {
-      next(new UnknownError(err.message));
+      next(err);
     });
 };
 
@@ -99,6 +97,6 @@ module.exports.createCard = (req, res, next) => {
         next(new ForbidenError(err.message));
         return;
       }
-      next(new UnkownError(err.message));
+      next(err);
     });
 };
