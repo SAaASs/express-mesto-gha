@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
+const NotFoundError = require('./errors/NotFoundError');
 require('events').EventEmitter.defaultMaxListeners = 20;
 const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/users');
@@ -27,8 +28,8 @@ app.use(auth);
 
 app.use('/users/', userRouter);
 app.use('/cards/', cardsRouter);
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Выбранного пути не существует' });
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Выбранного пути не существует'));
 });
 app.use(errors());
 app.use(errHandler);
