@@ -23,6 +23,7 @@ module.exports.patchProfileValidator = celebrate({
     about: Joi.string().min(2).max(30),
   }),
 });
+//Если сделать оба поля обязательными, нельзя будет изменить только 1 поле из 2, по заданию и name и about изменяются 1 контроллером
 module.exports.patchAvatarValidator = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string()
