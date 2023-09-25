@@ -1,6 +1,7 @@
 const userRouter = require('express').Router(); // создали роутер
 const {
-  patchUserValidator,
+  patchProfileValidator,
+  patchAvatarValidator,
   getUserValidator,
 } = require('../middlewares/errHandler');
 const {
@@ -15,6 +16,6 @@ userRouter.get('/', getAllUsers);
 userRouter.get('/me', getCurrentUser);
 userRouter.get('/:userId', getUserValidator, getUserById);
 
-userRouter.patch('/me', patchUserValidator, patchUserInfo);
-userRouter.patch('/me/avatar', patchUserValidator, patchUserAvatar);
+userRouter.patch('/me', patchProfileValidator, patchUserInfo);
+userRouter.patch('/me/avatar', patchAvatarValidator, patchUserAvatar);
 module.exports = { userRouter };
