@@ -48,25 +48,28 @@ module.exports.createUser = (req, res, next) => {
         {
           runValidators: true,
         },
-      ).then((user) => {
-        res.send({
-          _id: user[0]._id,
-          name: user[0].name,
-          about: user[0].about,
-          avatar: user[0].avatar,
-          email: user[0].email,
+      )
+        .then((user) => {
+          res.send({
+            _id: user[0]._id,
+            name: user[0].name,
+            about: user[0].about,
+            avatar: user[0].avatar,
+            email: user[0].email,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.code == 11000) {
+            next(new ConflictError(err.message));
+          }
         });
-      });
     })
     .catch((err) => {
+      console.log(err);
       if (err.name === 'ValidationError') {
         next(new ForbidenError(err.message));
-        return;
       }
-      if (err.code === 11000) {
-        next(new ConflictError(err.message));
-      }
-      next(err);
     });
 };
 module.exports.patchUserInfo = (req, res, next) => {
