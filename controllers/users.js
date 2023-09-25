@@ -59,17 +59,17 @@ module.exports.createUser = (req, res, next) => {
           });
         })
         .catch((err) => {
-          console.log(err);
           if (err.code == 11000) {
             next(new ConflictError(err.message));
           }
+          if (err.name === 'ValidationError') {
+            next(new ForbidenError(err.message));
+          }
+          //остальные ловятся через Joi
         });
     })
     .catch((err) => {
-      console.log(err);
-      if (err.name === 'ValidationError') {
-        next(new ForbidenError(err.message));
-      }
+      next(err);
     });
 };
 module.exports.patchUserInfo = (req, res, next) => {
@@ -121,13 +121,16 @@ module.exports.login = (req, res, next) => {
       res.send({ message: 'Авторизация прошла успешно' });
     })
     .catch((err) => {
-      err.statusCode = 401;
       next(err);
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
-  User.findById(req.user._id).then((user) => {
-    res.send(user);
-  });
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

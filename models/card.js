@@ -11,12 +11,13 @@ const cardSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: 'User',
     },
     likes: [
       {
         // описываем схему для одного элемента и заключаем её в квадратные скобки
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        ref: 'User',
         default: [],
       },
     ],
@@ -28,9 +29,9 @@ const cardSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
   },
-  { versionKey: false }
+  { versionKey: false },
 );
 module.exports = mongoose.model('Card', cardSchema);
