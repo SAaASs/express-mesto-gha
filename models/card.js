@@ -11,13 +11,13 @@ const cardSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: 'user',
     },
     likes: [
       {
         // описываем схему для одного элемента и заключаем её в квадратные скобки
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         default: [],
       },
     ],

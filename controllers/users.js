@@ -61,11 +61,13 @@ module.exports.createUser = (req, res, next) => {
         .catch((err) => {
           if (err.code == 11000) {
             next(new ConflictError(err.message));
+            return;
           }
           if (err.name === 'ValidationError') {
             next(new ForbidenError(err.message));
+            return;
           }
-          //остальные ловятся через Joi
+          next(err);
         });
     })
     .catch((err) => {

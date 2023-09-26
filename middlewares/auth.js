@@ -17,6 +17,7 @@ module.exports.auth = (req, res, next) => {
   } catch (err) {
     console.log('2nd err');
     next(new UnauthorisedError('Неправильный логин или пароль'));
+    return;
   }
   req.user = payload; // записываем пейлоуд в объект запроса
 
